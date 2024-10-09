@@ -39,7 +39,6 @@ function IssueNewCardPage({policy, route}: IssueNewCardPageProps) {
     const workspaceAccountID = PolicyUtils.getWorkspaceAccountID(policy?.id ?? '-1');
     const [cardSettings] = useOnyx(`${ONYXKEYS.COLLECTION.PRIVATE_EXPENSIFY_CARD_SETTINGS}${workspaceAccountID}`);
     const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
-    const isFocused = useIsFocused();
     const paymentBankAccountID = cardSettings?.paymentBankAccountID ?? 0;
 
     const {currentStep} = issueNewCard ?? {};
@@ -54,7 +53,7 @@ function IssueNewCardPage({policy, route}: IssueNewCardPageProps) {
         }
         Policy.updateGeneralSettings(policy.id, policy.name, CONST.CURRENCY.USD);
         setIsCurrencyModalOpen(false);
-    }, [policy]);
+    }, [policy,]);
 
     useEffect(() => {
             if (!Policy.isCurrencySupportedForDirectReimbursement(policy?.outputCurrency ?? '')) {
@@ -64,7 +63,7 @@ function IssueNewCardPage({policy, route}: IssueNewCardPageProps) {
             } else if (!paymentBankAccountID) {
                 Navigation.closeAndNavigate(ROUTES.WORKSPACE_EXPENSIFY_CARD_BANK_ACCOUNT.getRoute(policy?.id ?? '-1'));
             } else Card.startIssueNewCardFlow(policyID);
-    }, [paymentBankAccountID, eligibleBankAccounts, isSetupUnfinished, policyID,isFocused]);
+    }, [paymentBankAccountID, eligibleBankAccounts, isSetupUnfinished, policyID,isCurrencyModalOpen]);
 
     const getCurrentStep = () => {
         switch (currentStep) {
