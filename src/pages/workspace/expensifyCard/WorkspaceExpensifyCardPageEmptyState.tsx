@@ -50,29 +50,15 @@ function WorkspaceExpensifyCardPageEmptyState({route, policy}: WorkspaceExpensif
     const {shouldUseNarrowLayout} = useResponsiveLayout();
     const [bankAccountList] = useOnyx(ONYXKEYS.BANK_ACCOUNT_LIST);
     const [reimbursementAccount] = useOnyx(ONYXKEYS.REIMBURSEMENT_ACCOUNT);
-    const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
-
-    const eligibleBankAccounts = CardUtils.getEligibleBankAccountsForCard(bankAccountList ?? {});
 
     const reimbursementAccountStatus = reimbursementAccount?.achData?.state ?? '';
     const isSetupUnfinished = isEmptyObject(bankAccountList) && reimbursementAccountStatus && reimbursementAccountStatus !== CONST.BANK_ACCOUNT.STATE.OPEN;
 
-    const startFlow = useCallback(() => {
-        if (!eligibleBankAccounts.length || isSetupUnfinished) {
-            Navigation.navigate(ROUTES.BANK_ACCOUNT_WITH_STEP_TO_OPEN.getRoute('new', policy?.id, ROUTES.WORKSPACE_EXPENSIFY_CARD.getRoute(policy?.id ?? '-1')));
-        } else {
-            Navigation.navigate(ROUTES.WORKSPACE_EXPENSIFY_CARD_BANK_ACCOUNT.getRoute(policy?.id ?? '-1'));
-        }
-    }, [eligibleBankAccounts.length, isSetupUnfinished, policy?.id]);
+    const startFlow = () => {
+        const activeRoute = Navigation.getActiveRoute();
+        Navigation.navigate(ROUTES.WORKSPACE_EXPENSIFY_CARD_ISSUE_NEW.getRoute(policy?.id ?? '-1', activeRoute));
+    };
 
-    const confirmCurrencyChangeAndHideModal = useCallback(() => {
-        if (!policy) {
-            return;
-        }
-        Policy.updateGeneralSettings(policy.id, policy.name, CONST.CURRENCY.USD);
-        setIsCurrencyModalOpen(false);
-        startFlow();
-    }, [policy, startFlow]);
 
     return (
         <WorkspacePageWithSections
@@ -91,27 +77,11 @@ function WorkspaceExpensifyCardPageEmptyState({route, policy}: WorkspaceExpensif
                     subtitle={translate('workspace.moreFeatures.expensifyCard.feed.subTitle')}
                     ctaText={translate(isSetupUnfinished ? 'workspace.expensifyCard.finishSetup' : 'workspace.expensifyCard.issueNewCard')}
                     ctaAccessibilityLabel={translate('workspace.moreFeatures.expensifyCard.feed.ctaTitle')}
-                    onCtaPress={() => {
-                        if (!Policy.isCurrencySupportedForDirectReimbursement(policy?.outputCurrency ?? '')) {
-                            setIsCurrencyModalOpen(true);
-                            return;
-                        }
-                        startFlow();
-                    }}
+                    onCtaPress={startFlow}
                     illustrationBackgroundColor={theme.fallbackIconColor}
                     illustration={Illustrations.ExpensifyCardIllustration}
                     illustrationStyle={styles.expensifyCardIllustrationContainer}
                     titleStyles={styles.textHeadlineH1}
-                />
-                <ConfirmModal
-                    title={translate('workspace.common.expensifyCard')}
-                    isVisible={isCurrencyModalOpen}
-                    onConfirm={confirmCurrencyChangeAndHideModal}
-                    onCancel={() => setIsCurrencyModalOpen(false)}
-                    prompt={translate('workspace.bankAccount.updateCurrencyPrompt')}
-                    confirmText={translate('workspace.bankAccount.updateToUSD')}
-                    cancelText={translate('common.cancel')}
-                    danger
                 />
                 <Text style={[styles.textMicroSupporting, styles.m5]}>{translate('workspace.expensifyCard.disclaimer')}</Text>
             </View>
