@@ -1,6 +1,6 @@
 import type {StackScreenProps} from '@react-navigation/stack';
 import lodashDebounce from 'lodash/debounce';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {Keyboard, View} from 'react-native';
 import {useOnyx} from 'react-native-onyx';
 import type {GestureResponderEvent} from 'react-native/Libraries/Types/CoreEventTypes';
@@ -47,8 +47,6 @@ function WorkspaceInviteMessagePage({policy, route, currentUserPersonalDetails}:
     const styles = useThemeStyles();
     const {translate} = useLocalize();
 
-    const [welcomeNote, setWelcomeNote] = useState<string>();
-
     const {inputCallbackRef, inputRef} = useAutoFocusInput();
 
     const [invitedEmailsToAccountIDsDraft] = useOnyx(`${ONYXKEYS.COLLECTION.WORKSPACE_INVITE_MEMBERS_DRAFT}${route.params.policyID.toString()}`);
@@ -60,23 +58,8 @@ function WorkspaceInviteMessagePage({policy, route, currentUserPersonalDetails}:
         [policy?.name, currentUserPersonalDetails?.displayName],
     );
 
-    const getDefaultWelcomeNote = useCallback(() => {
-        return (
-            // workspaceInviteMessageDraft can be an empty string
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            workspaceInviteMessageDraft ||
-            // policy?.description can be an empty string
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            Parser.htmlToMarkdown(policy?.description ?? '') ||
-            translate('workspace.common.welcomeNote', {
-                workspaceName: policy?.name ?? '',
-            })
-        );
-    }, [workspaceInviteMessageDraft, policy, translate]);
-
     useEffect(() => {
         if (!isEmptyObject(invitedEmailsToAccountIDsDraft)) {
-            setWelcomeNote(getDefaultWelcomeNote());
             return;
         }
         if (isEmptyObject(policy)) {
@@ -86,13 +69,6 @@ function WorkspaceInviteMessagePage({policy, route, currentUserPersonalDetails}:
         // eslint-disable-next-line react-compiler/react-compiler, react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        if (isEmptyObject(invitedEmailsToAccountIDsDraft) || !welcomeNote) {
-            return;
-        }
-        setWelcomeNote(getDefaultWelcomeNote());
-    }, [getDefaultWelcomeNote, invitedEmailsToAccountIDsDraft, welcomeNote]);
-
     const debouncedSaveDraft = lodashDebounce((newDraft: string | null) => {
         Policy.setWorkspaceInviteMessageDraft(route.params.policyID, newDraft);
     });
@@ -101,7 +77,7 @@ function WorkspaceInviteMessagePage({policy, route, currentUserPersonalDetails}:
         Keyboard.dismiss();
         const policyMemberAccountIDs = Object.values(PolicyUtils.getMemberAccountIDsForWorkspace(policy?.employeeList, false, false));
         // Please see https://github.com/Expensify/App/blob/main/README.md#Security for more details
-        Member.addMembersToWorkspace(invitedEmailsToAccountIDsDraft ?? {}, `${welcomeNoteSubject}\n\n${welcomeNote}`, route.params.policyID, policyMemberAccountIDs);
+        Member.addMembersToWorkspace(invitedEmailsToAccountIDsDraft ?? {}, `${welcomeNoteSubject}\n\n${workspaceInviteMessageDraft}`, route.params.policyID, policyMemberAccountIDs);
         debouncedSaveDraft(null);
         Navigation.dismissModal();
     };
@@ -189,10 +165,9 @@ function WorkspaceInviteMessagePage({policy, route, currentUserPersonalDetails}:
                             autoCorrect={false}
                             autoGrowHeight
                             maxAutoGrowHeight={variables.textInputAutoGrowMaxHeight}
-                            defaultValue={getDefaultWelcomeNote()}
-                            value={welcomeNote}
+                            defaultValue={workspaceInviteMessageDraft}
+                            value={workspaceInviteMessageDraft}
                             onChangeText={(text: string) => {
-                                setWelcomeNote(text);
                                 debouncedSaveDraft(text);
                             }}
                             ref={(element: AnimatedTextInputRef) => {

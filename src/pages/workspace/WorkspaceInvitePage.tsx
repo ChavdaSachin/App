@@ -24,6 +24,7 @@ import * as LoginUtils from '@libs/LoginUtils';
 import Navigation from '@libs/Navigation/Navigation';
 import * as OptionsListUtils from '@libs/OptionsListUtils';
 import type {MemberForList} from '@libs/OptionsListUtils';
+import Parser from '@libs/Parser';
 import * as PhoneNumber from '@libs/PhoneNumber';
 import * as PolicyUtils from '@libs/PolicyUtils';
 import type {OptionData} from '@libs/ReportUtils';
@@ -130,6 +131,13 @@ function WorkspaceInvitePage({route, betas, invitedEmailsToAccountIDsDraft, poli
         if (firstRenderRef.current) {
             // We only want to add the saved selected user on first render
             firstRenderRef.current = false;
+            Policy.setWorkspaceInviteMessageDraft(
+                route.params.policyID,
+                Parser.htmlToMarkdown(policy?.description ?? '') ||
+                    translate('workspace.common.welcomeNote', {
+                        workspaceName: policy?.name ?? '',
+                    }),
+            );
             Object.keys(invitedEmailsToAccountIDsDraft ?? {}).forEach((login) => {
                 if (!(login in detailsMap)) {
                     return;
