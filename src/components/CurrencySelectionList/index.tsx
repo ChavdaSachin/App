@@ -111,6 +111,7 @@ function CurrencySelectionList({
             initiallyFocusedOptionKey={initiallySelectedCurrencyCode}
             showScrollIndicator
             canSelectMultiple={canSelectMultiple}
+            shouldPreventBackgroundHighlight
         />
     );
 }
