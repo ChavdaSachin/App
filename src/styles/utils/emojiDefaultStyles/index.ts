@@ -5,7 +5,8 @@ import type EmojiDefaultStyles from './types';
 
 const emojiDefaultStyles: EmojiDefaultStyles = {
     ...FontUtils.fontFamily.platform.EXP_NEUE,
-    ...display.dInline,
+    ...display.dInlineFlex,
+    textDecorationLine: 'none',
 };
 
 export default emojiDefaultStyles;

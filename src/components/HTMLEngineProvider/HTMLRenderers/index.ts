@@ -14,6 +14,7 @@ import RBRRenderer from './RBRRenderer';
 import ShortMentionRenderer from './ShortMentionRenderer';
 import TaskTitleRenderer from './TaskTitleRenderer';
 import VideoRenderer from './VideoRenderer';
+import DelRenderer from './DelRenderer';
 
 /**
  * This collection defines our custom renderers. It is a mapping from HTML tag type to the corresponding component.
@@ -24,7 +25,7 @@ const HTMLEngineProviderComponentList: CustomTagRendererRecord = {
     code: CodeRenderer,
     img: ImageRenderer,
     video: VideoRenderer,
-
+    // del: DelRenderer,
     // Custom tag renderers
     edited: EditedRenderer,
     pre: PreRenderer,
