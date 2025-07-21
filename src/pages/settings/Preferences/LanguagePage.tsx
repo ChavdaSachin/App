@@ -10,6 +10,7 @@ import {setLocaleAndNavigate} from '@userActions/App';
 import type {ListItem} from '@src/components/SelectionList/types';
 import {LOCALE_TO_LANGUAGE_STRING, SORTED_LOCALES} from '@src/CONST/LOCALES';
 import type Locale from '@src/types/onyx/Locale';
+import SingleSelectListItem from '@components/SelectionList/SingleSelectListItem';
 
 type LanguageEntry = ListItem & {
     value: Locale;
@@ -48,10 +49,11 @@ function LanguagePage() {
             <FullPageOfflineBlockingView>
                 <SelectionList
                     sections={[{data: locales}]}
-                    ListItem={RadioListItem}
+                    ListItem={SingleSelectListItem}
                     onSelectRow={updateLanguage}
                     shouldSingleExecuteRowSelect
                     initiallyFocusedOptionKey={locales.find((locale) => locale.isSelected)?.keyForList}
+                    shouldPreventBackgroundHighlight
                 />
             </FullPageOfflineBlockingView>
         </ScreenWrapper>

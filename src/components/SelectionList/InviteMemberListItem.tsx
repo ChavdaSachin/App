@@ -21,6 +21,7 @@ import CONST from '@src/CONST';
 import type {Icon} from '@src/types/onyx/OnyxCommon';
 import BaseListItem from './BaseListItem';
 import type {InviteMemberListItemProps, ListItem} from './types';
+import Checkbox from '@components/Checkbox';
 
 const fallbackIcon: Icon = {
     source: FallbackAvatar,
@@ -43,6 +44,7 @@ function InviteMemberListItem<TItem extends ListItem>({
     shouldSyncFocus,
     wrapperStyle,
     canShowProductTrainingTooltip = true,
+    shouldUseDefaultRightHandSideCheckmark = false
 }: InviteMemberListItemProps<TItem>) {
     const styles = useThemeStyles();
     const theme = useTheme();
@@ -64,7 +66,7 @@ function InviteMemberListItem<TItem extends ListItem>({
     const hoveredBackgroundColor = !!styles.sidebarLinkHover && 'backgroundColor' in styles.sidebarLinkHover ? styles.sidebarLinkHover.backgroundColor : theme.sidebar;
 
     const shouldShowCheckBox = canSelectMultiple && !item.isDisabled;
-
+    const shouldShowRadio = !shouldShowCheckBox;
     const handleCheckboxPress = useCallback(() => {
         if (onCheckboxPress) {
             onCheckboxPress(item);
@@ -98,6 +100,7 @@ function InviteMemberListItem<TItem extends ListItem>({
             shouldSyncFocus={shouldSyncFocus}
             shouldDisplayRBR={!shouldShowCheckBox}
             testID={item.text}
+            shouldUseDefaultRightHandSideCheckmark={shouldUseDefaultRightHandSideCheckmark}
         >
             {(hovered?: boolean) => (
                 <EducationalTooltip
@@ -153,20 +156,30 @@ function InviteMemberListItem<TItem extends ListItem>({
                             )}
                         </View>
                         {!!item.rightElement && item.rightElement}
-                        {!!shouldShowCheckBox && (
-                            <PressableWithFeedback
-                                onPress={handleCheckboxPress}
-                                disabled={isDisabled}
-                                role={CONST.ROLE.BUTTON}
-                                accessibilityLabel={item.text ?? ''}
-                                style={[styles.ml2, styles.optionSelectCircle]}
-                            >
-                                <SelectCircle
-                                    isChecked={item.isSelected ?? false}
-                                    selectCircleStyles={styles.ml0}
-                                />
-                            </PressableWithFeedback>
-                        )}
+    {!!shouldShowCheckBox && (
+        <PressableWithFeedback
+            onPress={handleCheckboxPress}
+            disabled={isDisabled}
+            role={CONST.ROLE.BUTTON}
+            accessibilityLabel={item.text ?? ''}
+            style={[styles.ml2, styles.optionSelectCircle]}
+        >
+            <Checkbox
+                isChecked={item.isSelected ?? false}
+                onPress={handleCheckboxPress} 
+                accessibilityLabel={CONST.ROLE.CHECKBOX}                                
+            />
+        </PressableWithFeedback>
+    )}
+    {!!shouldShowRadio &&
+                <Checkbox
+                    shouldSelectOnPressEnter
+                    containerBorderRadius={999}
+                    accessibilityLabel="SelectMember"
+                    isChecked={item.isSelected}
+                    onPress={() => onSelectRow(item)}
+                />
+                }
                     </View>
                 </EducationalTooltip>
             )}

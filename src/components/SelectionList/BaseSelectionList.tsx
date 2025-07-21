@@ -149,6 +149,7 @@ function BaseSelectionList<TItem extends ListItem>(
         selectedItems = [],
         isSelected,
         canShowProductTrainingTooltip,
+        shouldPreventBackgroundHighlight,
     }: SelectionListProps<TItem>,
     ref: ForwardedRef<SelectionListHandle>,
 ) {
@@ -625,7 +626,8 @@ function BaseSelectionList<TItem extends ListItem>(
                     singleExecution={singleExecution}
                     titleContainerStyles={listItemTitleContainerStyles}
                     canShowProductTrainingTooltip={canShowProductTrainingTooltipMemo}
-                />
+                    shouldPreventBackgroundHighlight={shouldPreventBackgroundHighlight}
+                    />
             </View>
         );
     };

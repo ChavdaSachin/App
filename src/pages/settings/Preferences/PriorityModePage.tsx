@@ -12,6 +12,7 @@ import Navigation from '@libs/Navigation/Navigation';
 import * as User from '@userActions/User';
 import CONST from '@src/CONST';
 import ONYXKEYS from '@src/ONYXKEYS';
+import SingleSelectListItem from '@components/SelectionList/SingleSelectListItem';
 
 type PriorityModeItem = {
     value: ValueOf<typeof CONST.PRIORITY_MODE>;
@@ -56,10 +57,11 @@ function PriorityModePage() {
             <Text style={[styles.mh5, styles.mv3]}>{translate('priorityModePage.explainerText')}</Text>
             <SelectionList
                 sections={[{data: priorityModes}]}
-                ListItem={RadioListItem}
+                ListItem={SingleSelectListItem}
                 onSelectRow={updateMode}
                 shouldSingleExecuteRowSelect
                 initiallyFocusedOptionKey={priorityModes.find((mode) => mode.isSelected)?.keyForList}
+                shouldPreventBackgroundHighlight
             />
         </ScreenWrapper>
     );

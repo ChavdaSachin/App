@@ -372,6 +372,8 @@ type ListItemProps<TItem extends ListItem> = CommonListItemProps<TItem> & {
 
     /** Whether to show the default right hand side checkmark */
     shouldUseDefaultRightHandSideCheckmark?: boolean;
+    
+    shouldPreventBackgroundHighlight?: boolean;
 };
 
 type BaseListItemProps<TItem extends ListItem> = CommonListItemProps<TItem> & {
@@ -392,6 +394,7 @@ type BaseListItemProps<TItem extends ListItem> = CommonListItemProps<TItem> & {
     testID?: string;
     /** Whether to show the default right hand side checkmark */
     shouldUseDefaultRightHandSideCheckmark?: boolean;
+    shouldPreventBackgroundHighlight?: boolean;
 };
 
 type UserListItemProps<TItem extends ListItem> = ListItemProps<TItem> & {
@@ -826,6 +829,7 @@ type SelectionListProps<TItem extends ListItem> = Partial<ChildrenProps> & {
 
     /** Whether product training tooltips can be displayed */
     canShowProductTrainingTooltip?: boolean;
+    shouldPreventBackgroundHighlight?: boolean;
 } & TRightHandSideComponent<TItem>;
 
 type SelectionListHandle = {

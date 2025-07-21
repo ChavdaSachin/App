@@ -1,7 +1,7 @@
 import {Str} from 'expensify-common';
 import React, {useCallback, useMemo, useState} from 'react';
 import SelectionList from '@components/SelectionList';
-import RadioListItem from '@components/SelectionList/RadioListItem';
+import singleS from '@components/SelectionList/RadioListItem';
 import SelectableListItem from '@components/SelectionList/SelectableListItem';
 import useLocalize from '@hooks/useLocalize';
 import useOnyx from '@hooks/useOnyx';
@@ -10,6 +10,8 @@ import getMatchScore from '@libs/getMatchScore';
 import ONYXKEYS from '@src/ONYXKEYS';
 import {isEmptyObject} from '@src/types/utils/EmptyObject';
 import type {CurrencyListItem, CurrencySelectionListProps} from './types';
+import MultiSelectListItem from '@components/SelectionList/MultiSelectListItem';
+import SingleSelectListItem from '@components/SelectionList/SingleSelectListItem';
 
 function CurrencySelectionList({
     searchInputLabel,
@@ -99,7 +101,7 @@ function CurrencySelectionList({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...restProps}
             sections={sections}
-            ListItem={canSelectMultiple ? SelectableListItem : RadioListItem}
+            ListItem={canSelectMultiple ? MultiSelectListItem : SingleSelectListItem}
             textInputLabel={searchInputLabel}
             textInputValue={searchValue}
             onChangeText={setSearchValue}
