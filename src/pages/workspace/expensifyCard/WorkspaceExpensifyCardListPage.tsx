@@ -1,3 +1,4 @@
+import {FlashList} from '@shopify/flash-list';
 import React, {useCallback, useContext, useMemo} from 'react';
 import type {ListRenderItemInfo} from 'react-native';
 import {FlatList, View} from 'react-native';
@@ -14,7 +15,6 @@ import {LockedAccountContext} from '@components/LockedAccountModalProvider';
 import OfflineWithFeedback from '@components/OfflineWithFeedback';
 import {PressableWithFeedback} from '@components/Pressable';
 import ScreenWrapper from '@components/ScreenWrapper';
-import ScrollView from '@components/ScrollView';
 import SearchBar from '@components/SearchBar';
 import Text from '@components/Text';
 import useBottomSafeSafeAreaPaddingStyle from '@hooks/useBottomSafeSafeAreaPaddingStyle';
@@ -240,23 +240,24 @@ function WorkspaceExpensifyCardListPage({route, cardsList, fundID}: WorkspaceExp
                     policyID={policyID}
                 />
             ) : (
-                <ScrollView
-                    addBottomSafeAreaPadding
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View style={{height: windowHeight - headerHeight}}>
+                <FlashList
+                    ListHeaderComponent={
                         <FlatList
                             data={filteredSortedCards}
                             renderItem={renderItem}
                             ListHeaderComponent={renderListHeader}
-                            contentContainerStyle={bottomSafeAreaPaddingStyle}
+                            contentContainerStyle={[bottomSafeAreaPaddingStyle, {minHeight: windowHeight - headerHeight}]}
                             keyboardShouldPersistTaps="handled"
                         />
-                    </View>
-                    <Text style={[styles.textMicroSupporting, styles.m5]}>
-                        {translate(isUkEuCurrencySupported ? 'workspace.expensifyCard.euUkDisclaimer' : 'workspace.expensifyCard.disclaimer')}
-                    </Text>
-                </ScrollView>
+                    }
+                    ListFooterComponent={
+                        <View style={[shouldUseNarrowLayout ? styles.workspaceSectionMobile : styles.workspaceSection]}>
+                            <Text style={[styles.textMicroSupporting, styles.m5]}>{translate('workspace.expensifyCard.disclaimer')}</Text>
+                        </View>
+                    }
+                    renderItem={undefined}
+                    data={undefined}
+                />
             )}
         </ScreenWrapper>
     );
