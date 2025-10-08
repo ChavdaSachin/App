@@ -108,6 +108,7 @@ function AddPersonalBankAccountPage() {
                             onSubmit={submitBankAccountForm}
                             validate={validatePlaidSelection}
                             style={[styles.flex1]}
+                            submitButtonStyles={[styles.mh5]}
                             shouldHideFixErrorsAlert
                         >
                             <InputWrapper
