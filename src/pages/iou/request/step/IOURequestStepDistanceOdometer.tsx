@@ -303,13 +303,18 @@ function IOURequestStepDistanceOdometer({
         }
         return true;
     };
+    const prepareTextForDisplay = (text: string): string => {
+            // Remove leading zeros and non-numeric characters except for the decimal point and comma
+            return text.replaceAll(/[^0-9., ]/g, '').replace(/^0+(?=\d)/, '');
+        };
 
     const handleStartReadingChange = (text: string) => {
         if (!isOdometerInputValid(text, startReading)) {
             return;
         }
-        setStartReading(text);
-        startReadingRef.current = text;
+        const textForDisplay = prepareTextForDisplay(text);
+        setStartReading(textForDisplay);
+        startReadingRef.current = textForDisplay;
         if (formError) {
             setFormError('');
         }
@@ -319,8 +324,9 @@ function IOURequestStepDistanceOdometer({
         if (!isOdometerInputValid(text, endReading)) {
             return;
         }
-        setEndReading(text);
-        endReadingRef.current = text;
+        const textForDisplay = prepareTextForDisplay(text);
+        setEndReading(textForDisplay);
+        endReadingRef.current = textForDisplay;
         if (formError) {
             setFormError('');
         }
