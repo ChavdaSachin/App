@@ -7,6 +7,52 @@ import ONYXKEYS from '@src/ONYXKEYS';
 import type {Request} from '@src/types/onyx';
 import type {AnyRequest} from '@src/types/onyx/Request';
 
+type PersistedFileMetadata = {
+    uri?: string;
+    source?: string;
+    name?: string;
+    type?: string;
+};
+
+function toPersistedFileMetadata(value: unknown): unknown {
+    if (!value || typeof value !== 'object') {
+        return value;
+    }
+
+    const maybeFile = value as {
+        uri?: unknown;
+        source?: unknown;
+        name?: unknown;
+        type?: unknown;
+    };
+
+    const fileMetadata: PersistedFileMetadata = {
+        ...(typeof maybeFile.uri === 'string' && {uri: maybeFile.uri}),
+        ...(typeof maybeFile.source === 'string' && {source: maybeFile.source}),
+        ...(typeof maybeFile.name === 'string' && {name: maybeFile.name}),
+        ...(typeof maybeFile.type === 'string' && {type: maybeFile.type}),
+    };
+
+    return Object.keys(fileMetadata).length > 0 ? fileMetadata : value;
+}
+
+function toPersistedRequest(request: AnyRequest): AnyRequest {
+    const data = request.data ?? {};
+
+    return {
+        ...request,
+        data: {
+            ...data,
+            ...(Object.prototype.hasOwnProperty.call(data, 'file') && {file: toPersistedFileMetadata(data.file)}),
+            ...(Object.prototype.hasOwnProperty.call(data, 'receipt') && {receipt: toPersistedFileMetadata(data.receipt)}),
+        },
+    };
+}
+
+function toPersistedRequests(requests: AnyRequest[]): AnyRequest[] {
+    return requests.map(toPersistedRequest);
+}
+
 let persistedRequests: AnyRequest[] = [];
 let ongoingRequest: AnyRequest | null = null;
 let pendingSaveOperations: AnyRequest[] = [];
@@ -50,7 +96,7 @@ Onyx.connectWithoutView({
                     knownRequestIDs.add(r.requestID ?? CONST.DEFAULT_NUMBER_ID);
                 }
                 persistedRequests = [...persistedRequests, ...newFromOtherTabs];
-                Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, persistedRequests);
+                Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, toPersistedRequests(persistedRequests));
             }
             return;
         }
@@ -85,7 +131,7 @@ Onyx.connectWithoutView({
             }
             const requests = [...persistedRequests, ...pendingSaveOperations];
             persistedRequests = requests;
-            Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, requests);
+            Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, toPersistedRequests(requests));
             pendingSaveOperations = [];
         }
 
@@ -176,7 +222,7 @@ function save<TKey extends OnyxKey>(requestToPersist: Request<TKey>): Promise<vo
         newQueueLength: requests.length,
     });
 
-    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, requests as AnyRequest[])
+    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, toPersistedRequests(requests as AnyRequest[]))
         .then(() => {
             Log.info('[PersistedRequests] Request successfully persisted to disk', false, {
                 command: requestToPersist.command,
@@ -237,7 +283,7 @@ function endRequestAndRemoveFromQueue<TKey extends OnyxKey>(requestToRemove: Req
     });
 
     Onyx.multiSet({
-        [ONYXKEYS.PERSISTED_REQUESTS]: persistedRequests,
+        [ONYXKEYS.PERSISTED_REQUESTS]: toPersistedRequests(persistedRequests),
         [ONYXKEYS.PERSISTED_ONGOING_REQUESTS]: null,
     }).then(() => {
         Log.info('[PersistedRequests] Successfully persisted request removal to disk', false, {
@@ -255,7 +301,7 @@ function deleteRequestsByIndices(indices: number[]): Promise<void> {
     persistedRequests = persistedRequests.filter((_, index) => !indicesSet.has(index));
 
     // Update the persisted requests in storage or state as necessary
-    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, persistedRequests).then(() => {
+    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, toPersistedRequests(persistedRequests)).then(() => {
         Log.info(`Multiple (${indices.length}) requests removed from the queue. Queue length is ${persistedRequests.length}`);
     });
 }
@@ -269,7 +315,7 @@ function update<TKey extends OnyxKey>(oldRequestIndex: number, newRequest: Reque
     if (newRequest.requestID != null) {
         knownRequestIDs.add(newRequest.requestID);
     }
-    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, requests);
+    return Onyx.set(ONYXKEYS.PERSISTED_REQUESTS, toPersistedRequests(requests));
 }
 
 function updateOngoingRequest<TKey extends OnyxKey>(newRequest: Request<TKey>) {
@@ -277,7 +323,7 @@ function updateOngoingRequest<TKey extends OnyxKey>(newRequest: Request<TKey>) {
     ongoingRequest = newRequest as AnyRequest;
 
     if (newRequest.persistWhenOngoing) {
-        Onyx.set(ONYXKEYS.PERSISTED_ONGOING_REQUESTS, newRequest as AnyRequest);
+        Onyx.set(ONYXKEYS.PERSISTED_ONGOING_REQUESTS, toPersistedRequest(newRequest as AnyRequest));
     }
 }
 
@@ -322,8 +368,8 @@ function processNextRequest(): AnyRequest | null {
     // This ensures that if the app crashes mid-flight, the ongoing request is not
     // lost (Bug #80759 Issue 3a) and the queue on disk matches memory (Issue 3c).
     Onyx.multiSet({
-        [ONYXKEYS.PERSISTED_REQUESTS]: persistedRequests,
-        ...(ongoingRequest ? {[ONYXKEYS.PERSISTED_ONGOING_REQUESTS]: ongoingRequest} : {}),
+        [ONYXKEYS.PERSISTED_REQUESTS]: toPersistedRequests(persistedRequests),
+        ...(ongoingRequest ? {[ONYXKEYS.PERSISTED_ONGOING_REQUESTS]: toPersistedRequest(ongoingRequest)} : {}),
     });
 
     return ongoingRequest;
@@ -363,7 +409,7 @@ function rollbackOngoingRequest() {
     // Persist both changes to disk so a crash after rollback doesn't lose
     // the rolled-back request or leave a stale ongoingRequest on disk.
     Onyx.multiSet({
-        [ONYXKEYS.PERSISTED_REQUESTS]: persistedRequests,
+        [ONYXKEYS.PERSISTED_REQUESTS]: toPersistedRequests(persistedRequests),
         [ONYXKEYS.PERSISTED_ONGOING_REQUESTS]: null,
     });
 }
