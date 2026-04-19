@@ -120,6 +120,9 @@ function getSyncConnectionParameters(connectionName: PolicyConnectionName) {
         case CONST.POLICY.CONNECTIONS.NAME.QBD: {
             return {readCommand: READ_COMMANDS.SYNC_POLICY_TO_QUICKBOOKS_DESKTOP, stageInProgress: CONST.POLICY.CONNECTIONS.SYNC_STAGE_NAME.STARTING_IMPORT_QBD};
         }
+        case CONST.POLICY.CONNECTIONS.NAME.CERTINIA: {
+            return {readCommand: READ_COMMANDS.SYNC_POLICY_TO_FINANCIAL_FORCE, stageInProgress: CONST.POLICY.CONNECTIONS.SYNC_STAGE_NAME.FINANCIAL_FORCE_SYNC_CONNECTION};
+        }
         default:
             return undefined;
     }
@@ -359,6 +362,8 @@ function isConnectionInProgress(connectionSyncProgress: OnyxEntry<PolicyConnecti
 }
 
 export type {ConnectionNameExceptNetSuite};
+
+export * from './FinancialForce';
 
 export {
     removePolicyConnection,

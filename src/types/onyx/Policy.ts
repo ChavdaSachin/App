@@ -1346,6 +1346,85 @@ type SageIntacctConnectionsConfig = OnyxCommon.OnyxValueWithOfflineFeedback<
     SageIntacctOfflineStateKeys | keyof SageIntacctSyncConfig | keyof SageIntacctAutoSyncConfig | keyof SageIntacctExportConfig
 >;
 
+/** Certinia (FinancialForce) connection data */
+type FinancialForceConnectionData = {
+    /** Salesforce Accounts used as Default Vendor options */
+    vendors: Array<{name: string; id: string}>;
+
+    /** Certinia companies (c2g__codaCompany__c), used by SRP */
+    companies: Array<{name: string; id: string}>;
+};
+
+/** Certinia (FinancialForce) connection config */
+type FinancialForceConnectionConfig = OnyxCommon.OnyxValueWithOfflineFeedback<
+    {
+        /** Certinia credentials */
+        credentials: {
+            /** Sandbox flag */
+            isSandbox: boolean;
+        };
+
+        /** Certinia coding config (import settings) */
+        coding: {
+            /** Dimension 1 mapping */
+            dimension1?: ValueOf<typeof CONST.CERTINIA_MAPPING_VALUE>;
+
+            /** Dimension 2 mapping */
+            dimension2?: ValueOf<typeof CONST.CERTINIA_MAPPING_VALUE>;
+
+            /** Dimension 3 mapping */
+            dimension3?: ValueOf<typeof CONST.CERTINIA_MAPPING_VALUE>;
+
+            /** Dimension 4 mapping */
+            dimension4?: ValueOf<typeof CONST.CERTINIA_MAPPING_VALUE>;
+
+            /** Whether tax should be synced */
+            syncTax?: boolean;
+        };
+
+        /** Certinia export settings */
+        export: {
+            /** The e-mail of the exporter */
+            exporter?: string;
+
+            /** The status to export payable invoices at */
+            exportStatus?: ValueOf<typeof CONST.CERTINIA_EXPORT_STATUS>;
+
+            /** The date to use for the exported payable invoice */
+            exportDate?: ValueOf<typeof CONST.CERTINIA_EXPORT_DATE>;
+
+            /** Default vendor account ID */
+            vendorAccount?: string;
+        };
+
+        /** Configuration of automatic synchronization */
+        autoSync: {
+            /** Whether auto-sync is enabled */
+            enabled: boolean;
+        };
+
+        /** Advanced configuration */
+        advanced: {
+            /** Whether reimbursed reports should be synced */
+            syncReimbursedReports: boolean;
+        };
+
+        /** Collection of form field errors */
+        errorFields?: OnyxCommon.ErrorFields;
+    },
+    | typeof CONST.CERTINIA_CONFIG.EXPORTER
+    | typeof CONST.CERTINIA_CONFIG.EXPORT_STATUS
+    | typeof CONST.CERTINIA_CONFIG.EXPORT_DATE
+    | typeof CONST.CERTINIA_CONFIG.VENDOR_ACCOUNT
+    | typeof CONST.CERTINIA_CONFIG.DIMENSION1
+    | typeof CONST.CERTINIA_CONFIG.DIMENSION2
+    | typeof CONST.CERTINIA_CONFIG.DIMENSION3
+    | typeof CONST.CERTINIA_CONFIG.DIMENSION4
+    | typeof CONST.CERTINIA_CONFIG.SYNC_TAX
+    | typeof CONST.CERTINIA_CONFIG.AUTO_SYNC
+    | typeof CONST.CERTINIA_CONFIG.SYNC_REIMBURSED_REPORTS
+>;
+
 /** Gusto connection data */
 type GustoConnectionData = Record<string, never>;
 
@@ -1493,7 +1572,7 @@ type Connections = {
     [CONST.POLICY.CONNECTIONS.NAME.QBD]: Connection<QBDConnectionData, QBDConnectionConfig>;
 
     /** Certinia integration connection */
-    [CONST.POLICY.CONNECTIONS.NAME.CERTINIA]: Connection<Record<string, never>, Record<string, never>>;
+    [CONST.POLICY.CONNECTIONS.NAME.CERTINIA]: Connection<FinancialForceConnectionData, FinancialForceConnectionConfig>;
 
     /** Gusto integration connection */
     [CONST.POLICY.CONNECTIONS.NAME.GUSTO]: Connection<GustoConnectionData, GustoConnectionConfig>;
@@ -2212,6 +2291,8 @@ export type {
     SageIntacctDataElement,
     SageIntacctConnectionsConfig,
     SageIntacctExportConfig,
+    FinancialForceConnectionConfig,
+    FinancialForceConnectionData,
     ACHAccount,
     ApprovalRule,
     ExpenseRule,

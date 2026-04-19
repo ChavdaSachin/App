@@ -2698,6 +2698,37 @@ const CONST = {
         REPORT_FIELD: 'REPORT_FIELD',
     },
 
+    CERTINIA_CONFIG: {
+        EXPORTER: 'exporter',
+        EXPORT_STATUS: 'exportStatus',
+        EXPORT_DATE: 'exportDate',
+        VENDOR_ACCOUNT: 'vendorAccount',
+        DIMENSION1: 'dimension1',
+        DIMENSION2: 'dimension2',
+        DIMENSION3: 'dimension3',
+        DIMENSION4: 'dimension4',
+        SYNC_TAX: 'syncTax',
+        AUTO_SYNC: 'enabled',
+        SYNC_REIMBURSED_REPORTS: 'syncReimbursedReports',
+    },
+
+    CERTINIA_EXPORT_STATUS: {
+        APPROVED: 'APPROVED',
+        IN_PROGRESS: 'IN_PROGRESS',
+    },
+
+    CERTINIA_EXPORT_DATE: {
+        LAST_EXPENSE: 'LAST_EXPENSE',
+        REPORT_SUBMITTED: 'REPORT_SUBMITTED',
+        REPORT_EXPORTED: 'REPORT_EXPORTED',
+    },
+
+    CERTINIA_MAPPING_VALUE: {
+        DEFAULT: 'DEFAULT',
+        TAG: 'TAG',
+        REPORT_FIELD: 'REPORT_FIELD',
+    },
+
     SAGE_INTACCT_CONFIG: {
         MAPPINGS: {
             DEPARTMENTS: 'departments',
@@ -3657,12 +3688,10 @@ const CONST = {
                 XERO: 'xero',
                 NETSUITE: 'netsuite',
                 SAGE_INTACCT: 'intacct',
-                CERTINIA: 'certinia',
+                CERTINIA: 'financialForce',
                 GUSTO: 'gusto',
             },
-            SUPPORTED_ONLY_ON_OLDDOT: {
-                FINANCIALFORCE: 'financialForce',
-            },
+            SUPPORTED_ONLY_ON_OLDDOT: {} as Record<string, never>,
             UNSUPPORTED_NAMES: {
                 GENERIC_INDIRECT_CONNECTION: 'generic_indirect_connection',
             },
@@ -3681,7 +3710,7 @@ const CONST = {
                 quickbooksDesktop: 'QuickBooks Desktop',
                 xero: 'Xero',
                 intacct: 'Sage Intacct',
-                financialForce: 'FinancialForce',
+                financialForce: 'Certinia',
                 certinia: 'Certinia',
                 gusto: 'Gusto',
                 billCom: 'Bill.com',
@@ -3776,6 +3805,7 @@ const CONST = {
                 SAGE_INTACCT_SYNC_IMPORT_EMPLOYEES: 'intacctImportEmployees',
                 SAGE_INTACCT_SYNC_IMPORT_DIMENSIONS: 'intacctImportDimensions',
                 SAGE_INTACCT_SYNC_IMPORT_SYNC_REIMBURSED_REPORTS: 'intacctImportSyncBillPayments',
+                FINANCIAL_FORCE_SYNC_CONNECTION: 'financialForceSyncConnection',
             },
             SYNC_STAGE_TIMEOUT_MINUTES: 20,
         },

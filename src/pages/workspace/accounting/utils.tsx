@@ -1,5 +1,6 @@
 import React from 'react';
 import type {OnyxEntry} from 'react-native-onyx';
+import ConnectToCertiniaFlow from '@components/ConnectToCertiniaFlow';
 import ConnectToNetSuiteFlow from '@components/ConnectToNetSuiteFlow';
 import ConnectToQuickbooksDesktopFlow from '@components/ConnectToQuickbooksDesktopFlow';
 import ConnectToQuickbooksOnlineFlow from '@components/ConnectToQuickbooksOnlineFlow';
@@ -306,6 +307,36 @@ function getAccountingIntegrationData(
                     integrationAlias: CONST.UPGRADE_FEATURE_INTRO_MAPPING.quickbooksDesktop.alias,
                     backToAfterWorkspaceUpgradeRoute: getBackToAfterWorkspaceUpgradeRouteForQBD(),
                 },
+            };
+        case CONST.POLICY.CONNECTIONS.NAME.CERTINIA:
+            return {
+                title: translate('workspace.accounting.certinia'),
+                setupConnectionFlow: (
+                    <ConnectToCertiniaFlow
+                        policyID={policyID}
+                        key={key}
+                    />
+                ),
+                onImportPagePress: () => Navigation.navigate(ROUTES.POLICY_ACCOUNTING_CERTINIA_IMPORT.getRoute(policyID)),
+                subscribedImportSettings: [
+                    CONST.CERTINIA_CONFIG.DIMENSION1,
+                    CONST.CERTINIA_CONFIG.DIMENSION2,
+                    CONST.CERTINIA_CONFIG.DIMENSION3,
+                    CONST.CERTINIA_CONFIG.DIMENSION4,
+                    CONST.CERTINIA_CONFIG.SYNC_TAX,
+                ],
+                onExportPagePress: () => Navigation.navigate(ROUTES.POLICY_ACCOUNTING_CERTINIA_EXPORT.getRoute(policyID)),
+                subscribedExportSettings: [
+                    CONST.CERTINIA_CONFIG.EXPORTER,
+                    CONST.CERTINIA_CONFIG.EXPORT_STATUS,
+                    CONST.CERTINIA_CONFIG.EXPORT_DATE,
+                    CONST.CERTINIA_CONFIG.VENDOR_ACCOUNT,
+                ],
+                onAdvancedPagePress: () => Navigation.navigate(ROUTES.POLICY_ACCOUNTING_CERTINIA_ADVANCED.getRoute(policyID)),
+                subscribedAdvancedSettings: [CONST.CERTINIA_CONFIG.AUTO_SYNC, CONST.CERTINIA_CONFIG.SYNC_REIMBURSED_REPORTS],
+                onCardReconciliationPagePress: () => Navigation.navigate(ROUTES.WORKSPACE_ACCOUNTING_CARD_RECONCILIATION.getRoute(policyID, CONST.POLICY.CONNECTIONS.ROUTE.CERTINIA)),
+                pendingFields: policy?.connections?.financialForce?.config?.pendingFields,
+                errorFields: policy?.connections?.financialForce?.config?.errorFields,
             };
         default:
             return undefined;

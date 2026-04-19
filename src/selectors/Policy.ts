@@ -130,6 +130,9 @@ const iouRequestPolicyCollectionSelector = (policies: OnyxCollection<Policy>): O
 const adminPoliciesConnectedToSageIntacctSelector = (policies: OnyxCollection<Policy>) =>
     Object.values(policies ?? {}).filter<Policy>((policy): policy is Policy => !!policy && policy.role === CONST.POLICY.ROLE.ADMIN && !!policy?.connections?.intacct);
 
+const adminPoliciesConnectedToCertiniaSelector = (policies: OnyxCollection<Policy>) =>
+    Object.values(policies ?? {}).filter<Policy>((policy): policy is Policy => !!policy && policy.role === CONST.POLICY.ROLE.ADMIN && !!policy?.connections?.financialForce);
+
 const adminPoliciesConnectedToNetSuiteSelector = (policies: OnyxCollection<Policy>) =>
     Object.values(policies ?? {}).filter<Policy>((policy): policy is Policy => !!policy && policy.role === CONST.POLICY.ROLE.ADMIN && !!policy?.connections?.netsuite);
 
@@ -149,6 +152,8 @@ function getReusablePoliciesConnectedToQBD(policies: OnyxCollection<Policy>, cur
 const reusablePoliciesConnectedToQBDSelector = (policies: OnyxCollection<Policy>, currentPolicyID?: string) => getReusablePoliciesConnectedToQBD(policies, currentPolicyID);
 
 const hasPoliciesConnectedToSageIntacctSelector = (policies: OnyxCollection<Policy>) => !!adminPoliciesConnectedToSageIntacctSelector(policies).length;
+
+const hasPoliciesConnectedToCertiniaSelector = (policies: OnyxCollection<Policy>) => !!adminPoliciesConnectedToCertiniaSelector(policies).length;
 
 const hasPoliciesConnectedToNetSuiteSelector = (policies: OnyxCollection<Policy>) => !!adminPoliciesConnectedToNetSuiteSelector(policies).length;
 
@@ -197,10 +202,12 @@ export {
     iouRequestPolicyCollectionSelector,
     shouldRedirectToExpensifyClassicSelector,
     adminPoliciesConnectedToSageIntacctSelector,
+    adminPoliciesConnectedToCertiniaSelector,
     adminPoliciesConnectedToNetSuiteSelector,
     adminPoliciesConnectedToQBDSelector,
     reusablePoliciesConnectedToQBDSelector,
     hasPoliciesConnectedToSageIntacctSelector,
+    hasPoliciesConnectedToCertiniaSelector,
     hasPoliciesConnectedToNetSuiteSelector,
     hasPoliciesConnectedToQBDSelector,
     hasReusablePoliciesConnectedToQBDSelector,

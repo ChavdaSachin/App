@@ -4813,6 +4813,51 @@ const translations = {
                 },
             },
         },
+        certinia: {
+            prerequisites: {
+                title: 'Before you begin',
+                step1Title: 'Install the Expensify package',
+                step1Description: 'Install the Expensify managed package from the Salesforce AppExchange.',
+                step2Title: 'Create a connected app',
+                step2Description: 'Create a connected app in Salesforce and configure OAuth settings.',
+                step3Title: 'Provide credentials',
+                step3Description: 'Enter your Salesforce credentials to complete the connection.',
+                connectButton: 'Connect to Certinia',
+            },
+            import: {
+                chartOfAccounts: 'Chart of accounts',
+                chartOfAccountsDescription: 'Your chart of accounts will be imported from Certinia.',
+                dimension1: 'Dimension 1',
+                dimension2: 'Dimension 2',
+                dimension3: 'Dimension 3',
+                dimension4: 'Dimension 4',
+                dimensionMapping: ({n}: {n: string}) => `Dimension ${n} mapping`,
+                doNotMap: 'Do not map',
+                taxDescription: 'Tax will be imported from Certinia.',
+            },
+            export: {
+                preferredExporter: 'Preferred exporter',
+                reimbursableAsPayableInvoice: 'Reimbursable expenses as payable invoices',
+                nonReimbursableAsPayableInvoice: 'Non-reimbursable expenses as payable invoices',
+                payableInvoice: 'Payable invoice',
+                payableInvoiceStatus: 'Payable invoice status',
+                payableInvoiceDate: 'Payable invoice date',
+                defaultVendor: 'Default vendor',
+                statusOptions: {
+                    [CONST.CERTINIA_EXPORT_STATUS.APPROVED]: 'Approved',
+                    [CONST.CERTINIA_EXPORT_STATUS.IN_PROGRESS]: 'In progress',
+                },
+                dateOptions: {
+                    [CONST.CERTINIA_EXPORT_DATE.LAST_EXPENSE]: 'Date of last expense',
+                    [CONST.CERTINIA_EXPORT_DATE.REPORT_SUBMITTED]: 'Report submitted date',
+                    [CONST.CERTINIA_EXPORT_DATE.REPORT_EXPORTED]: 'Report exported date',
+                },
+            },
+            advanced: {
+                autoSyncDescription: 'Automatically sync your Certinia connection.',
+                syncReimbursedReportsDescription: 'Sync reimbursed reports to Certinia.',
+            },
+        },
         netsuite: {
             subsidiary: 'Subsidiary',
             subsidiarySelectDescription: "Choose the subsidiary in NetSuite that you'd like to import data from.",
@@ -6058,6 +6103,7 @@ const translations = {
             xero: 'Xero',
             netsuite: 'NetSuite',
             intacct: 'Sage Intacct',
+            certinia: 'Certinia',
             sap: 'SAP',
             oracle: 'Oracle',
             microsoftDynamics: 'Microsoft Dynamics',
@@ -6075,6 +6121,8 @@ const translations = {
                         return 'NetSuite';
                     case CONST.POLICY.CONNECTIONS.NAME.SAGE_INTACCT:
                         return 'Sage Intacct';
+                    case CONST.POLICY.CONNECTIONS.NAME.CERTINIA:
+                        return 'Certinia';
                     default: {
                         return '';
                     }
